@@ -4,6 +4,7 @@ Module to interact with the database.
 
 from . import placeholders
 from . import db_ops
+import json
 
 db_ops.ensure_db()
 
@@ -33,10 +34,24 @@ def search_trains(
 
     This is used to get show the trains on the search results page.
     """
+    col,trains_data=db_ops.exec_query(f"select number,name,from_station_code,from_station_name,to_station_code,to_station_name,departure,arrival,duration_h,duration_m from train where from_station_code like '%{from_station_code}%' and to_station_code like '%{to_station_code}%';")
     # TODO: make a db query to get the matching trains
     # and replace the following dummy implementation
+    array_data= [ {
+        "number":i[0],
+        "name": i[1],
+        "from_station_code": i[2],
+        "from_station_name": i[3],
+        "to_station_code": i[4],
+        "to_station_name": i[5],
+        "departure":i[6],
+        "arrival": i[7],
+        "duration_h":i[8],
+        "duration_m": i[9]
+        } for i in trains_data]
+    
+    return array_data
 
-    return placeholders.SEARCH_TRAINS
 
 def get_schedule(train_number):
     """Returns the schedule of a train.
@@ -58,3 +73,4 @@ def get_trips(email):
     # made by user with `email`
 
     return placeholders.TRIPS
+
