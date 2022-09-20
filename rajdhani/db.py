@@ -18,9 +18,18 @@ def search_stations(q):
     The q is the few characters of the station name or
     code entered by the user.
     """
+
+    col, rows = db_ops.exec_query(f"select code ,name from station where name like '%{q}%'")
+    array_data= [ {
+        "code":i[0],
+        "name": i[1],
+       
+        } for i in rows]
+    print("-----search_stations-----",array_data)
     # TODO: make a db query to get the matching stations
     # and replace the following dummy implementation
-    return placeholders.AUTOCOMPLETE_STATIONS
+    return array_data
+search_stations("sr")    
 def get_dynamic_query(ticket_class):
     if(ticket_class=="SL"):
         return "and sleeper =1"
@@ -77,7 +86,7 @@ def search_trains(
         "duration_h":i[8],
         "duration_m": i[9]
         } for i in trains_data]
-    print(array_data)
+    
 
     if departure_time or arrival_time:
         new_train_data=[]
