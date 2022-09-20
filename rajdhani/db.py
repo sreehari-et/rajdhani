@@ -5,6 +5,7 @@ Module to interact with the database.
 from . import placeholders
 from . import db_ops
 import json
+from datetime import datetime
 
 db_ops.ensure_db()
 
@@ -49,6 +50,15 @@ def search_trains(
 
     This is used to get show the trains on the search results page.
     """
+    slot1 = datetime.strptime('00:00:00', '%H:%M:%S')
+
+    slot2 = datetime.strptime('08:00:00', '%H:%M:%S')
+
+    slot3 = datetime.strptime('12:00:00', '%H:%M:%S')
+
+    slot4 = datetime.strptime('16:00:00', '%H:%M:%S')
+
+    slot5 = datetime.strptime('20:00:00', '%H:%M:%S')
     
     
     dynamic_query=get_dynamic_query(ticket_class)
@@ -68,6 +78,24 @@ def search_trains(
         "duration_m": i[9]
         } for i in trains_data]
     print(array_data)
+
+    if departure_time or arrival_time:
+        new_train_data=[]
+        for data in array_data:
+            for slot in departure_time:
+                if slot == "slot1" and slot1 <= datetime.strptime(data["departure"], '%H:%M:%S') and slot2>= datetime.strptime(data["departure"], '%H:%M:%S'):
+                    new_train_data.append(data)
+                if slot == "slot3" and slot3 <= datetime.strptime(data["arrival"], '%H:%M:%S') and slot4>= datetime.strptime(data["arrival"], '%H:%M:%S'):
+
+                    new_train_data.append(data)     
+                if slot == "slot4" and slot4 <= datetime.strptime(data["arrival"], '%H:%M:%S') and slot5>= datetime.strptime(data["arrival"], '%H:%M:%S'):
+
+                    new_train_data.append(data)   
+                if slot == "slot5" and slot5 < datetime.strptime(data["arrival"], '%H:%M:%S'):
+
+                    new_train_data.append(data)
+
+        array_data= new_train_data
     return array_data
 
 
