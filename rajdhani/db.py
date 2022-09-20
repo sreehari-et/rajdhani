@@ -88,7 +88,7 @@ def search_trains(
         } for i in trains_data]
     
 
-    if departure_time or arrival_time:
+    if len(departure_time)>0 or len(arrival_time)>0:
         new_train_data=[]
         for data in array_data:
             for slot in departure_time:
@@ -111,6 +111,38 @@ def search_trains(
 def get_schedule(train_number):
     """Returns the schedule of a train.
     """
+    col, rows = exec_query(f"select * from schedule where train_number = '{int(train_number)}';")
+
+    s = schedule_table
+
+    sa = select([ s.c.station_code ,
+
+                s.c.station_name ,
+
+                s.c.train_number ,
+
+                s.c.train_name ,
+
+                s.c.day ,
+
+                s.c.arrival ,
+
+                s.c.departure ]).where(s.c.train_number == int(train_number))
+
+    rows = (list(sa.execute()))
+
+    # print((rows[0:10]))
+
+    sch = []
+
+    for row in rows:
+
+        # print(row)
+
+        d = {"station_code": row[0], "station_name":  row[1], "day": row[4], "arrival": row[5], "departure":row[6]}
+
+        sch.append(d)
+
     return placeholders.SCHEDULE
 
 def book_ticket(train_number, ticket_class, departure_date, passenger_name, passenger_email):
