@@ -20,11 +20,26 @@ def search_stations(q):
     # TODO: make a db query to get the matching stations
     # and replace the following dummy implementation
     return placeholders.AUTOCOMPLETE_STATIONS
+def get_dynamic_query(ticket_class):
+    if(ticket_class=="SL"):
+        return "and sleeper =1"
+    elif(ticket_class=="3A"):
+        return "and third_ac =1"
+    elif(ticket_class=="2A"):
+        return "and second_ac =1"
+    elif(ticket_class=="1A"):
+        return "and first_ac =1"
+    elif(ticket_class=="FC"):
+        return "and first_class =1"
+    elif(ticket_class=="CC"):
+        return "and chair_car =1"
+    else:
+        return ""
 
 def search_trains(
         from_station_code,
         to_station_code,
-        ticket_class=None,
+        ticket_class,
         departure_date=None,
         departure_time=[],
         arrival_time=[]):
@@ -34,7 +49,10 @@ def search_trains(
 
     This is used to get show the trains on the search results page.
     """
-    col,trains_data=db_ops.exec_query(f"select number,name,from_station_code,from_station_name,to_station_code,to_station_name,departure,arrival,duration_h,duration_m from train where from_station_code like '%{from_station_code}%' and to_station_code like '%{to_station_code}%';")
+    
+    
+    dynamic_query=get_dynamic_query(ticket_class)
+    col,trains_data=db_ops.exec_query(f"select number,name,from_station_code,from_station_name,to_station_code,to_station_name,departure,arrival,duration_h,duration_m from train where from_station_code like '%{from_station_code}%' and to_station_code like '%{to_station_code}%'{dynamic_query};")
     # TODO: make a db query to get the matching trains
     # and replace the following dummy implementation
     array_data= [ {
@@ -49,7 +67,7 @@ def search_trains(
         "duration_h":i[8],
         "duration_m": i[9]
         } for i in trains_data]
-    
+    print(array_data)
     return array_data
 
 
